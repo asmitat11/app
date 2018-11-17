@@ -39,10 +39,26 @@ router.get('/:bname/:ludocid/:location_id', function(req, res, next) {
 	  mySubString = result.substring(
 		    result.lastIndexOf("Seeallquestions(") + 16 , 
 		    result.lastIndexOf(")")
-    
 		);
-    res.send(mySubString)
-	  
+
+	      var db = req.db;
+ 
+ // var collection = db.get('tbl_question');
+  
+
+    var collection = db.collection('tbl_question');
+
+    var product = {  url: url,bname : bname ,ludocid:ludocid ,  location_id : location_id ,count : mySubString};
+
+    collection.insert(product, function(err, result) {
+
+    if(err) { throw err; }
+
+      db.close();
+
+      res.redirect('/');   
+  });
+	   
 	  await browser.close();
 	})();
 
