@@ -25,14 +25,17 @@ router.get('/:bname/:ludocid/:location_id', function(req, res, next) {
      const proxyUrl=proxy
 
       const options = {
-       		args: [`--proxy-server=105.30.17.3:53281`],
-       		ignoreHTTPSErrors: true,
-    		headless: true,
+       		//args: [`--proxy-server=105.30.17.3:53281`],
+       		args: ['--no-sandbox'],
+       		//ignoreHTTPSErrors: true,
+    		//headless: true,
 
 		};
-	  const browser = await puppeteer.launch();
+	  const browser = await puppeteer.launch(options);
 	  const page = await browser.newPage();
-	  await page.goto(url, {waitUntil: 'load', timeout: 0});
+	  const response = await page.goto(url, {waitUntil: 'load', timeout: 0});
+     // console.log(response.headers());
+    var resdata= response.headers();
 	  const text = await page.$eval('*', el => el.innerText);
 	 //console.log(text)	
 	  var result = text.replace(/ /g, '');
@@ -41,7 +44,12 @@ router.get('/:bname/:ludocid/:location_id', function(req, res, next) {
 		    result.lastIndexOf(")")
     
 		);
-    res.send(mySubString)
+   // res.send(mySubString)
+   var obj = {};
+    obj['status'] =resdata.status;
+    obj['count'] =mySubString;
+    
+    res.json(obj);
 	  
 	  await browser.close();
 	})();
